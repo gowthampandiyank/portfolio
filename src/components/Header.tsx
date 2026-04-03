@@ -166,7 +166,7 @@ const Header = () => {
               ))}
 
               <motion.a
-                href="/resume.pdf"
+                href="/portfolio/gowtham-pandiyan.docx""
                 target="_blank"
                 className="mt-8 px-8 py-3 bg-accent text-accent-foreground rounded-full text-sm font-semibold inline-flex items-center gap-2"
                 initial={{ opacity: 0, y: 20 }}
