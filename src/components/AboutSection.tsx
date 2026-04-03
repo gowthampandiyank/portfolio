@@ -9,7 +9,11 @@ const AboutSection = () => {
           <ScrollReveal direction="left">
             <div className="relative">
               <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 aspect-[4/5] flex items-center justify-center border border-border">
-                <span className="text-7xl font-display font-bold text-primary/15">GP</span>
+                <span className="text-7xl font-display font-bold text-primary/15"><img
+    src="/portfolio/gp2.png"
+    alt="Gowtham Pandiyan"
+    className="w-full h-full object-cover object-top"
+  /></span>
               </div>
               {/* Stats badge */}
               <div className="absolute -bottom-4 -right-4 bg-card border border-border rounded-xl px-5 py-3 shadow-lg">
