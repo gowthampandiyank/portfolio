@@ -105,12 +105,12 @@ const HeroSection = () => {
                 />
                 {/* Inner image card */}
                 <div className="relative w-full h-full rounded-[calc(1.5rem-4px)] overflow-hidden">
-                  <img
-                    src="public/gp2.png"
-                    alt="Gowtham Pandiyan"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
+  <img
+    src="/portfolio/gp2.png"
+    alt="Gowtham Pandiyan"
+    className="w-full h-full object-cover object-top"
+  />
+</div>
               </div>
 
               <div className="absolute -top-5 -right-5 w-10 h-10 rounded-full bg-primary/20" />
