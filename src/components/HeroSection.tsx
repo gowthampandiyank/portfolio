@@ -106,7 +106,7 @@ const HeroSection = () => {
                 {/* Inner image card */}
                 <div className="relative w-full h-full rounded-[calc(1.5rem-4px)] overflow-hidden">
   <img
-    src="/portfolio/avatar.webp"
+    src="/portfolio/gp1.jpg"
     alt="Gowtham Pandiyan"
     className="w-full h-full object-cover object-top"
   />
