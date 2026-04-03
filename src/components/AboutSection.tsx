@@ -10,7 +10,7 @@ const AboutSection = () => {
             <div className="relative">
               <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 aspect-[4/5] flex items-center justify-center border border-border">
                 <span className="text-7xl font-display font-bold text-primary/15"><img
-    src="/portfolio/gp2.png"
+    src="/portfolio/gp1.jpg"
     alt="Gowtham Pandiyan"
     className="w-full h-full object-cover object-top"
   /></span>
