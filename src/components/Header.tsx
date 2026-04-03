@@ -68,8 +68,8 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="group relative">
           <span className="font-display font-black text-2xl tracking-tighter text-foreground">
-            Gowtham
-            <span className="text-accent">Pandiyan</span>
+            G
+            <span className="text-accent">P</span>
           </span>
           <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
         </Link>
