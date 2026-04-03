@@ -110,7 +110,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <a
-            href="/gowtham-pandiyan.docx"
+            href="/public/gowtham-pandiyan.docx"
             target="_blank"
             className="hidden md:inline-flex items-center gap-1.5 px-5 py-2 bg-accent text-accent-foreground rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-accent/25 hover:-translate-y-0.5 transition-all duration-300"
           >
