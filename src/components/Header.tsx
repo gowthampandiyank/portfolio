@@ -68,8 +68,8 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="group relative">
           <span className="font-display font-black text-2xl tracking-tighter text-foreground">
-            G
-            <span className="text-accent">P</span>
+            Gowtham
+            <span className="text-accent">Pandiyan</span>
           </span>
           <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
         </Link>
@@ -110,7 +110,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <a
-            href="/resume.pdf"
+            href="/gowtham-pandiyan.docx"
             target="_blank"
             className="hidden md:inline-flex items-center gap-1.5 px-5 py-2 bg-accent text-accent-foreground rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-accent/25 hover:-translate-y-0.5 transition-all duration-300"
           >
