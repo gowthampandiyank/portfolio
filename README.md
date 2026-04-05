@@ -91,13 +91,31 @@ Data Analyst | Front-End Developer
 
 🔗 LinkedIn: [https://www.linkedin.com/in/gowtham-pandiyan-kannan-a7474b304/](https://www.linkedin.com/in/gowtham-pandiyan-kannan-a7474b304/)
 🌐 Portfolio: [https://gowthampandiyank.github.io/portfolio/](https://gowthampandiyank.github.io/portfolio/)
+1.Hero section :-
+<img width="1366" height="645" alt="hero section" src="https://github.com/user-attachments/assets/7a6c992e-9b11-4931-aa71-7ce6990a6b28" />
+2.About section :-
+<img width="1366" height="644" alt="about section" src="https://github.com/user-attachments/assets/e7d09546-68dd-435c-8633-ec919c8831d8" />
+3.Skils Section :-
+<img width="1366" height="511" alt="skills section" src="https://github.com/user-attachments/assets/04d8ce67-577d-4233-89a7-891267f08537" />
+4.Exp-Journey Section :- 
+<img width="1364" height="646" alt="expirians section" src="https://github.com/user-attachments/assets/6bc74d72-f781-4a5a-bab1-56d790d0f603" />
+5.Project section :-
+<img width="1366" height="646" alt="works section" src="https://github.com/user-attachments/assets/71abc689-f109-40fc-a864-a6b6e1c1b221" />
+6.contact section :-
+<img width="1366" height="647" alt="contact section" src="https://github.com/user-attachments/assets/f87f216d-b5f3-4a89-a953-435274993bc3" />
+7.admin-login section :- 
+<img width="1366" height="649" alt="admin login section" src="https://github.com/user-attachments/assets/7b384945-de98-4bfa-8661-e8864e14d66e" />
+8.projects-editing section :-
+<img width="1366" height="650" alt="admin login section project adding panal" src="https://github.com/user-attachments/assets/b8784255-e43f-4e0e-b2d5-5d02b949e288" />
+9.admin-dashport section:-
+<img width="1366" height="649" alt="admindashport" src="https://github.com/user-attachments/assets/f812cc11-7043-4e2b-a930-a85112fc4cda" />
 
-<img width="1366" height="647" alt="contact section" src="https://github.com/user-attachments/assets/9b5fe2c0-7336-4664-bf1e-2ad88e058d6a" />
-<img width="1366" height="649" alt="admindashport" src="https://github.com/user-attachments/assets/8f1bc042-0327-4423-b7ec-c03ee8a1d265" />
-<img width="1366" height="649" alt="admin login section" src="https://github.com/user-attachments/assets/c7c50edb-641f-484f-a16b-f711db08b6bb" />
-<img width="1366" height="650" alt="admin login section project adding panal" src="https://github.com/user-attachments/assets/9e6cbcc0-132f-4066-9e2e-ad045ddafa3c" />
-<img width="1366" height="644" alt="about section" src="https://github.com/user-attachments/assets/ad522b63-0581-4999-8a99-090b4a8c0fbf" />
-<img width="1366" height="646" alt="works section" src="https://github.com/user-attachments/assets/86214c08-8a2f-49a0-89d7-7578217012a2" />
-<img width="1366" height="511" alt="skills section" src="https://github.com/user-attachments/assets/d45a3469-997f-46b3-b589-53a4d2c8ee88" />
-<img width="1366" height="645" alt="hero section" src="https://github.com/user-attachments/assets/bee5ff4c-54b9-4797-8d29-b97dc8ae5be3" />
-<img width="1364" height="646" alt="expirians section" src="https://github.com/user-attachments/assets/db20c095-23c3-4f6c-a3c7-ea41684e30ce" />
+
+
+
+
+
+
+
+
+
