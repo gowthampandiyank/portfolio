@@ -25,7 +25,7 @@ const ArsenalSection = () => {
       <div className="container">
         <ScrollReveal>
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">My Arsenal</h2>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">My Skills</h2>
             <p className="text-sm text-muted-foreground mt-3 max-w-md mx-auto">
               The tools and technologies I use to turn data problems into elegant solutions.
             </p>
