@@ -1,31 +1,101 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import Works from "./pages/Works.tsx";
-import AdminLogin from "./pages/AdminLogin.tsx";
-import AdminDashboard from "./pages/AdminDashboard.tsx";
-import NotFound from "./pages/NotFound.tsx";
-const queryClient = new QueryClient();
+import { useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ShoppingBag, UserRound, Menu, X, ArrowUpRight, SlidersHorizontal, Plus, Minus, Trash2, ShieldCheck, Truck, Sparkles, LockKeyhole, Upload, PackageCheck, ChevronRight } from 'lucide-react';
+import { supabase } from './lib/supabase';
+import { useShop } from './store/shop';
+import type { Session } from '@supabase/supabase-js';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/works" element={<Works />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </HashRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const products = [
+  { id:'p1', title:'CYBER RONIN', subtitle:'Red Thread / Original Anime Style', price:1499, type:'T-Shirts', theme:'anime', craft:'embroidery', badge:'BESTSELLER', tone:'cyan', art:'⚔', sku:'CYBR-M-BLK' },
+  { id:'p2', title:'NEON GUARDIAN', subtitle:'Signal Core / Original Superhero Style', price:1899, type:'Hoodies', theme:'superhero', craft:'print', badge:'NEW DROP', tone:'red', art:'✦', sku:'NGRD-L-BLK' },
+  { id:'p3', title:'SHADOW CIRCUIT', subtitle:'Dual Craft / Hybrid Original Artwork', price:2399, type:'Jackets', theme:'hybrid', craft:'combo', badge:'LIMITED', tone:'yellow', art:'◈', sku:'SHDW-XL-BLK' },
+  { id:'p4', title:'TITAN CORE VEST', subtitle:'Core Mark / Original Superhero Style', price:899, type:'Vest Innerwear', theme:'superhero', craft:'print', badge:'CORE PICK', tone:'cyan', art:'◎', sku:'TITN-M-BLK' },
+  { id:'p5', title:'TOKYO AFTERIMAGE', subtitle:'Ghost Panel / Original Anime Style', price:1699, type:'T-Shirts', theme:'anime', craft:'embroidery', badge:'DROP 02', tone:'red', art:'☄', sku:'TOKY-L-BLK' },
+  { id:'p6', title:'VOLT KNIGHT', subtitle:'Electric Crest / Original Superhero Style', price:1999, type:'Hoodies', theme:'superhero', craft:'print', badge:'HOT', tone:'yellow', art:'⚡', sku:'VOLT-M-BLK' },
+];
+const types = ['All','T-Shirts','Hoodies','Jackets','Vest Innerwear'];
+const themes = ['All','anime','superhero'];
+const crafts = ['All','embroidery','print'];
+
+function ProductArt({ p, large=false }: {p: typeof products[number]; large?: boolean}) {
+  return <div className={`relative overflow-hidden bg-ink ${large?'aspect-[4/5]':'aspect-[4/5]'}`}>
+    <div className="halftone absolute inset-0 opacity-50" />
+    <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full border-[24px] border-cyan/20" />
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className={`relative flex ${large?'h-64 w-52':'h-52 w-44'} items-center justify-center border-4 border-paper bg-[#1b1918] shadow-[10px_10px_0_#000]`}>
+        <span className={`absolute -left-4 top-5 px-3 py-1 text-[10px] font-black tracking-widest ${p.tone==='red'?'bg-red':p.tone==='yellow'?'bg-yellow text-ink':'bg-cyan text-ink'} border-2 border-ink rotate-[-5deg]`}>{p.badge}</span>
+        <span className="comic-star text-paper/10">{p.art}</span>
+        <div className="absolute bottom-5 left-4 right-4 border-t-2 border-paper/20 pt-2 font-mono text-[9px] text-paper/60">ORIGINAL ARTWORK // {p.craft.toUpperCase()}</div>
+      </div>
+    </div>
+    <div className="absolute bottom-3 right-3 bg-paper px-3 py-2 text-ink font-mono text-xs font-bold shadow-[4px_4px_0_#000]">₹{p.price.toLocaleString('en-IN')}</div>
+  </div>
+}
+
+function App(){
+  const { cart, cartOpen, setCartOpen, addToCart, updateQty, removeFromCart, setUser } = useShop();
+  const [tab,setTab] = useState<'shop'|'admin'>('shop');
+  const [mobile,setMobile] = useState(false);
+  const [query,setQuery] = useState('');
+  const [type,setType] = useState('All');
+  const [theme,setTheme] = useState('All');
+  const [craft,setCraft] = useState('All');
+  const [sort,setSort] = useState('featured');
+  const [selected,setSelected] = useState<typeof products[number]|null>(null);
+  const [authOpen,setAuthOpen] = useState(false);
+  const [email,setEmail] = useState('');
+  const [authMsg,setAuthMsg] = useState('');
+  const [session,setSession] = useState<Session|null>(null);
+
+  useEffect(()=>{ if(!supabase) return; supabase.auth.getSession().then(({data})=>{setSession(data.session);setUser(data.session?.user??null)}); const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,s)=>{setSession(s);setUser(s?.user??null)}); return ()=>subscription.unsubscribe(); },[setUser]);
+  const filtered=useMemo(()=>products.filter(p=>(type==='All'||p.type===type)&&(theme==='All'||p.theme===theme)&&(craft==='All'||p.craft===craft)&&(`${p.title} ${p.subtitle}`.toLowerCase().includes(query.toLowerCase()))).sort((a,b)=>sort==='price-low'?a.price-b.price:sort==='price-high'?b.price-a.price:0),[query,type,theme,craft,sort]);
+  const total=cart.reduce((s,x)=>s+x.price*x.quantity,0);
+  const count=cart.reduce((s,x)=>s+x.quantity,0);
+  const checkout=()=>{ if(!session){setAuthOpen(true);return;} alert('Stripe Checkout: connect the create-checkout-session Edge Function to redirect here.'); };
+  const magicLink=async()=>{ if(!supabase){setAuthMsg('Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local.');return;} const {error}=await supabase.auth.signInWithOtp({email}); setAuthMsg(error?.message||'Magic link sent — check your inbox.'); };
+
+  return <div className="min-h-screen bg-ink text-paper selection:bg-red selection:text-paper">
+    <header className="sticky top-0 z-40 border-b-2 border-paper/10 bg-ink/95 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+        <button onClick={()=>{setTab('shop');window.scrollTo({top:0,behavior:'smooth'})}} className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center border-2 border-paper bg-red font-display text-2xl shadow-[4px_4px_0_#000]">IF</span><span className="font-display text-2xl tracking-wide">INKFORGE<span className="text-red">//</span>STREET</span></button>
+        <nav className="hidden items-center gap-7 md:flex"><button onClick={()=>setTab('shop')} className="navlink">SHOP</button><a href="#drop" className="navlink">LATEST DROP</a><a href="#craft" className="navlink">THE CRAFT</a><button onClick={()=>setTab('admin')} className="navlink">ADMIN</button></nav>
+        <div className="flex items-center gap-2"><button aria-label="Search" onClick={()=>document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'})} className="iconbtn"><Search size={19}/></button><button aria-label="Account" onClick={()=>setAuthOpen(true)} className="iconbtn"><UserRound size={19}/></button><button aria-label="Cart" onClick={()=>setCartOpen(true)} className="relative iconbtn"><ShoppingBag size={19}/>{count>0&&<span className="badge">{count}</span>}</button><button onClick={()=>setMobile(!mobile)} className="iconbtn md:hidden">{mobile?<X/>:<Menu/>}</button></div>
+      </div>
+      <AnimatePresence>{mobile&&<motion.div initial={{height:0}} animate={{height:'auto'}} exit={{height:0}} className="overflow-hidden border-t border-paper/10 md:hidden"><div className="grid gap-4 px-5 py-5 font-display text-xl"><button onClick={()=>{setTab('shop');setMobile(false)}}>SHOP</button><a href="#drop" onClick={()=>setMobile(false)}>LATEST DROP</a><a href="#craft" onClick={()=>setMobile(false)}>THE CRAFT</a><button onClick={()=>{setTab('admin');setMobile(false)}}>ADMIN</button></div></motion.div>}</AnimatePresence>
+    </header>
+
+    {tab==='shop'?<>
+    <main>
+      <section id="drop" className="comic-grid relative min-h-[650px] overflow-hidden border-b-2 border-ink bg-paper text-ink">
+        <div className="absolute inset-0 halftone-dark"/><div className="absolute -right-28 top-20 h-[560px] w-[560px] rounded-full border-[80px] border-red/15"/>
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 lg:grid-cols-[1.1fr_.9fr] lg:px-8">
+          <div><div className="mb-5 inline-flex rotate-[-2deg] items-center gap-2 border-2 border-ink bg-yellow px-4 py-2 font-mono text-xs font-black shadow-[5px_5px_0_#12100F]"><Sparkles size={14}/> DROP 07 // LIVE NOW</div><h1 className="font-display text-[clamp(4.5rem,12vw,10rem)] leading-[.78] tracking-tight">WEAR<br/><span className="text-red">THE</span><br/>PANEL.</h1><p className="mt-8 max-w-xl text-lg font-semibold leading-relaxed">Original character art. Heavyweight garments. High-detail threadwork. Built for people who treat streetwear like a collectible.</p><div className="mt-8 flex flex-wrap gap-3"><button onClick={()=>document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'})} className="btn-red">SHOP THE DROP <ArrowUpRight size={19}/></button><span className="flex items-center gap-2 px-3 font-mono text-xs font-bold"><ShieldCheck size={17}/> ORIGINAL ARTWORK READY</span></div></div>
+          <div className="relative mx-auto w-full max-w-md rotate-[3deg]"><ProductArt p={products[0]} large/><div className="absolute -bottom-8 -left-8 border-4 border-ink bg-cyan px-5 py-4 font-display text-3xl shadow-[7px_7px_0_#12100F]">18,400+ STITCHES</div></div>
+        </div>
+      </section>
+      <section className="border-b-2 border-paper/10 bg-red py-3 overflow-hidden"><div className="marquee font-display text-2xl tracking-wider">ORIGINAL ART • EMBROIDERED HARD • PRINTED LOUD • NO BORING FITS • ORIGINAL ART • EMBROIDERED HARD • PRINTED LOUD • NO BORING FITS •</div></section>
+
+      <section id="catalog" className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+        <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"><div><p className="eyebrow">01 / THE VAULT</p><h2 className="section-title">PICK YOUR<br/><span className="text-cyan">CHARACTER.</span></h2></div><div className="flex max-w-md items-center gap-2 border-2 border-paper/20 bg-paper/5 px-3 py-3"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search drops, characters, craft..." className="w-full bg-transparent font-mono text-sm outline-none placeholder:text-paper/40"/></div></div>
+        <div className="mb-8 grid gap-3 border-y border-paper/15 py-4 lg:grid-cols-[1fr_auto]"><div className="flex flex-wrap gap-2"><div className="mr-2 flex items-center gap-2 font-mono text-xs text-paper/50"><SlidersHorizontal size={15}/> FILTER</div>{types.map(x=><button key={x} onClick={()=>setType(x)} className={`filter ${type===x?'filter-active':''}`}>{x}</button>)}{themes.map(x=><button key={x} onClick={()=>setTheme(x)} className={`filter ${theme===x?'filter-active-cyan':''}`}>{x==='All'?'ALL THEMES':x.toUpperCase()}</button>)}{crafts.map(x=><button key={x} onClick={()=>setCraft(x)} className={`filter ${craft===x?'filter-active-yellow':''}`}>{x==='All'?'ALL CRAFT':x.toUpperCase()}</button>)}</div><select value={sort} onChange={e=>setSort(e.target.value)} className="select"><option value="featured">Featured</option><option value="price-low">Price: Low</option><option value="price-high">Price: High</option></select></div>
+        <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(p=><motion.article layout key={p.id} whileHover={{y:-6}} className="panel-card group"><button onClick={()=>setSelected(p)} className="block w-full text-left"><ProductArt p={p}/><div className="p-5"><div className="mb-2 flex items-center justify-between gap-3"><span className="font-mono text-[10px] tracking-widest text-paper/40">{p.sku}</span><span className="font-mono text-xs text-cyan">{p.craft}</span></div><h3 className="font-display text-3xl leading-none">{p.title}</h3><p className="mt-2 text-sm text-paper/55">{p.subtitle}</p><div className="mt-5 flex items-center justify-between"><span className="price">₹{p.price.toLocaleString('en-IN')}</span><span className="grid h-10 w-10 place-items-center border-2 border-paper group-hover:bg-red"><ArrowUpRight size={18}/></span></div></div></button></motion.article>)}</motion.div>
+      </section>
+
+      <section id="craft" className="border-y-2 border-paper/10 bg-paper text-ink"><div className="mx-auto grid max-w-7xl lg:grid-cols-2"><div className="p-8 lg:p-16"><p className="eyebrow text-ink/50">02 / THE CRAFT</p><h2 className="section-title text-ink">THREAD<br/><span className="text-red">MEETS</span><br/>ATTITUDE.</h2><p className="mt-7 max-w-lg text-lg font-semibold">Every embroidery piece is treated like a tiny billboard. Dense stitch counts, sharp contrast and tactile texture make the artwork pop off the garment.</p><div className="mt-8 grid grid-cols-3 gap-3">{[['18K+','STITCHES'],['240GSM','HEAVYWEIGHT'],['3XL','SIZE RANGE']].map(([a,b])=><div key={b} className="border-2 border-ink p-4 shadow-[4px_4px_0_#E8432E]"><b className="font-display text-3xl">{a}</b><span className="block font-mono text-[9px]">{b}</span></div>)}</div></div><div className="min-h-[420px] bg-ink p-8 lg:p-16"><div className="flex h-full flex-col justify-between border-2 border-paper/20 p-7"><span className="font-mono text-xs text-cyan">WORKFLOW // 001—004</span><div className="space-y-5">{[['01','ART DIRECTION','Original character / licensed artwork'],['02','DIGITIZATION','Thread map + stitch density'],['03','PRODUCTION','Embroidery / screen print'],['04','QUALITY CHECK','Detail, fit, finish']].map(([n,a,b])=><div key={n} className="flex gap-4 border-b border-paper/10 pb-5"><span className="font-mono text-xs text-red">{n}</span><div><b className="font-display text-2xl">{a}</b><p className="font-mono text-[10px] text-paper/45">{b}</p></div></div>)}</div><span className="font-mono text-[10px] text-paper/40">CUSTOM ARTWORK SLOTS AVAILABLE VIA ADMIN</span></div></div></div></section>
+    </main>
+    <footer className="border-t-2 border-paper/10 px-4 py-10 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 md:flex-row"><div><div className="font-display text-2xl">INKFORGE//STREET</div><p className="mt-1 font-mono text-[10px] text-paper/40">ORIGINAL ART. HARD GARMENTS. ZERO GENERIC ENERGY.</p></div><div className="flex gap-6 font-mono text-[10px] text-paper/40"><span>PRIVACY</span><span>TERMS</span><span>SHIPPING</span><span>© 2026 INKFORGE</span></div></div></footer>
+    </>:<Admin/>}
+
+    <AnimatePresence>{selected&&<ProductModal p={selected} onClose={()=>setSelected(null)} onAdd={(size,color)=>{addToCart({id:selected.id,title:selected.title,price:selected.price,image:'',size,color,sku:selected.sku});setSelected(null)}}/>}</AnimatePresence>
+    <AnimatePresence>{cartOpen&&<CartDrawer items={cart} total={total} onClose={()=>setCartOpen(false)} updateQty={updateQty} remove={removeFromCart} checkout={checkout}/>}</AnimatePresence>
+    <AnimatePresence>{authOpen&&<div className="fixed inset-0 z-50 grid place-items-center bg-black/80 p-4"><motion.div initial={{scale:.95,opacity:0}} animate={{scale:1,opacity:1}} className="w-full max-w-md border-4 border-paper bg-ink p-7 shadow-[12px_12px_0_#E8432E]"><div className="flex justify-between"><div><p className="eyebrow">ACCOUNT // ACCESS</p><h2 className="font-display text-4xl">ENTER THE VAULT</h2></div><button onClick={()=>setAuthOpen(false)}><X/></button></div>{session?<div className="mt-8"><p className="text-paper/60">Signed in as</p><p className="font-mono">{session.user.email}</p><button onClick={async()=>{await supabase?.auth.signOut();setAuthOpen(false)}} className="btn-red mt-6">SIGN OUT</button></div>:<><p className="mt-5 text-sm text-paper/60">Use a magic link. No password. No friction.</p><input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder="you@example.com" className="field mt-5"/><button onClick={magicLink} className="btn-red mt-3 w-full">SEND MAGIC LINK <ArrowUpRight size={18}/></button>{authMsg&&<p className="mt-4 font-mono text-xs text-cyan">{authMsg}</p>}<div className="mt-6 flex items-center gap-2 font-mono text-[10px] text-paper/35"><LockKeyhole size={13}/> SUPABASE AUTH // RLS PROTECTED</div></>}</motion.div></div>}</AnimatePresence>
+  </div>
+}
+
+function ProductModal({p,onClose,onAdd}:{p:typeof products[number];onClose:()=>void;onAdd:(s:string,c:string)=>void}){const [size,setSize]=useState('M');const [color,setColor]=useState('Ink Black');return <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 p-4"><motion.div initial={{y:30,opacity:0}} animate={{y:0,opacity:1}} className="mx-auto my-8 grid max-w-5xl border-4 border-paper bg-ink shadow-[12px_12px_0_#3DD9E8] lg:grid-cols-2"><ProductArt p={p} large/><div className="p-6 lg:p-10"><div className="flex justify-end"><button onClick={onClose}><X/></button></div><p className="eyebrow">{p.craft.toUpperCase()} // {p.theme.toUpperCase()}</p><h2 className="font-display text-5xl">{p.title}</h2><p className="mt-3 text-paper/55">{p.subtitle}. Original character design placeholder supports future licensed artwork uploads.</p><div className="mt-6 flex items-center justify-between border-y border-paper/15 py-5"><span className="price text-4xl">₹{p.price.toLocaleString('en-IN')}</span><span className="font-mono text-xs text-cyan">IN STOCK • READY TO SHIP</span></div><div className="mt-6"><div className="mb-3 flex justify-between"><b className="font-display text-xl">SIZE</b><button className="font-mono text-[10px] underline">SIZE CHART</button></div><div className="grid grid-cols-4 gap-2">{['XS','S','M','L','XL','2XL','3XL'].map(s=><button key={s} onClick={()=>setSize(s)} className={`option ${size===s?'option-active':''}`}>{s}</button>)}</div></div><div className="mt-6"><b className="font-display text-xl">COLOR</b><div className="mt-3"><button onClick={()=>setColor('Ink Black')} className={`option ${color==='Ink Black'?'option-active':''}`}>INK BLACK</button></div></div><button onClick={()=>onAdd(size,color)} className="btn-red mt-7 w-full justify-center">ADD TO CART <ShoppingBag size={18}/></button><div className="mt-5 grid grid-cols-3 gap-3 font-mono text-[9px] text-paper/40"><span>✓ HEAVYWEIGHT</span><span>✓ QUALITY CHECK</span><span>✓ SECURE PACK</span></div></div></motion.div></div>}
+
+function CartDrawer({items,total,onClose,updateQty,remove,checkout}:{items:any[];total:number;onClose:()=>void;updateQty:(id:string,q:number)=>void;remove:(id:string)=>void;checkout:()=>void}){return <div className="fixed inset-0 z-50 bg-black/70"><motion.aside initial={{x:'100%'}} animate={{x:0}} exit={{x:'100%'}} className="ml-auto flex h-full w-full max-w-md flex-col border-l-4 border-paper bg-ink"><div className="flex items-center justify-between border-b border-paper/15 p-5"><div><p className="eyebrow">YOUR LOADOUT</p><h2 className="font-display text-3xl">CART</h2></div><button onClick={onClose}><X/></button></div><div className="flex-1 overflow-auto p-5">{items.length===0?<div className="grid h-full place-items-center text-center"><ShoppingBag size={42} className="mx-auto text-paper/20"/><p className="mt-3 font-display text-2xl">NOTHING EQUIPPED.</p><p className="font-mono text-xs text-paper/40">Add a piece from the vault.</p></div>:items.map(x=><div key={x.id} className="mb-4 border-2 border-paper/10 p-4"><div className="flex justify-between gap-4"><div><b className="font-display text-xl">{x.title}</b><p className="font-mono text-[10px] text-paper/40">{x.size} / {x.color}</p></div><button onClick={()=>remove(x.id)}><Trash2 size={16}/></button></div><div className="mt-4 flex items-center justify-between"><div className="flex items-center border border-paper/20"><button onClick={()=>updateQty(x.id,x.quantity-1)} className="p-2"><Minus size={13}/></button><span className="w-8 text-center font-mono text-xs">{x.quantity}</span><button onClick={()=>updateQty(x.id,x.quantity+1)} className="p-2"><Plus size={13}/></button></div><span className="price">₹{(x.price*x.quantity).toLocaleString('en-IN')}</span></div></div>)}</div><div className="border-t border-paper/15 p-5"><div className="flex justify-between font-mono text-sm"><span>SUBTOTAL</span><b>₹{total.toLocaleString('en-IN')}</b></div><p className="mt-2 font-mono text-[9px] text-paper/35">COUPON CODE AVAILABLE AT CHECKOUT</p><button disabled={!items.length} onClick={checkout} className="btn-red mt-5 w-full justify-center disabled:opacity-40">SECURE CHECKOUT <LockKeyhole size={17}/></button><div className="mt-4 flex justify-center gap-4 font-mono text-[9px] text-paper/30"><span>STRIPE</span><span>SSL</span><span>SUPABASE</span></div></div></motion.aside></div>}
+
+function Admin(){const [status,setStatus]=useState('All');return <main className="min-h-[calc(100vh-74px)] bg-[#0e0d0c]"><div className="mx-auto max-w-7xl px-4 py-12 lg:px-8"><div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="eyebrow">ADMIN // RESTRICTED</p><h1 className="section-title">CONTROL<br/><span className="text-red">ROOM.</span></h1></div><button className="btn-cyan"><Upload size={17}/> UPLOAD ARTWORK</button></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[['24','LIVE SKUs'],['186','UNITS IN STOCK'],['17','OPEN ORDERS'],['₹48.6K','TODAY']].map(([a,b])=><div className="stat" key={b}><span className="font-display text-4xl">{a}</span><span className="font-mono text-[10px] text-paper/40">{b}</span></div>)}</div><div className="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]"><div className="panel-card p-5"><div className="mb-5 flex items-center justify-between"><h2 className="font-display text-2xl">ORDER PIPELINE</h2><select className="select" value={status} onChange={e=>setStatus(e.target.value)}><option>All</option><option>stitching</option><option>quality_check</option><option>shipped</option><option>delivered</option></select></div>{[['#IF-2048','Cyber Ronin','STITCHING','₹2,998'],['#IF-2047','Neon Guardian','QUALITY CHECK','₹1,899'],['#IF-2046','Shadow Circuit','SHIPPED','₹2,399'],['#IF-2045','Titan Core Vest','DELIVERED','₹899']].map(([id,p,s,v])=><div className="flex flex-col gap-3 border-t border-paper/10 py-4 sm:flex-row sm:items-center sm:justify-between" key={id}><div><span className="font-mono text-[10px] text-paper/35">{id}</span><b className="ml-3 font-display text-xl">{p}</b></div><div className="flex items-center gap-4"><span className="font-mono text-[9px] text-cyan">{s}</span><b className="price text-base">{v}</b><ChevronRight size={16}/></div></div>)}</div><div className="panel-card p-5"><h2 className="font-display text-2xl">INVENTORY</h2><div className="mt-5 space-y-4">{products.slice(0,4).map(p=><div key={p.id}><div className="flex justify-between"><span className="font-display">{p.title}</span><span className="font-mono text-xs">12 / 24</span></div><div className="mt-2 h-2 bg-paper/10"><div className="h-full w-1/2 bg-cyan"/></div></div>)}</div><button className="mt-7 flex items-center gap-2 font-mono text-xs text-red">MANAGE VARIANTS <ArrowUpRight size={14}/></button></div></div><div className="mt-8 grid gap-4 md:grid-cols-3"><div className="stat"><PackageCheck/><b className="font-display text-xl">FULFILLMENT</b><p className="font-mono text-[9px] text-paper/40">Track Stitching → QC → Shipped → Delivered.</p></div><div className="stat"><Upload/><b className="font-display text-xl">IMAGE MANAGER</b><p className="font-mono text-[9px] text-paper/40">Supabase Storage bucket: product-art.</p></div><div className="stat"><ShieldCheck/><b className="font-display text-xl">RLS ACTIVE</b><p className="font-mono text-[9px] text-paper/40">Admin mutations require role=admin.</p></div></div></div></main>}
 
 export default App;
