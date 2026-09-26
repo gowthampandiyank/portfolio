@@ -202,3 +202,21 @@
     left: 20px;
   }
 }
+
+
+/* Cinematic portfolio motion layer */
+html { scroll-behavior: smooth; }
+body { overflow-x: hidden; }
+::selection { background: hsl(var(--primary) / .2); }
+
+@keyframes ambient-drift { 0%,100%{transform:translate3d(0,0,0) scale(1)} 50%{transform:translate3d(18px,-14px,0) scale(1.04)} }
+.ambient-drift { animation: ambient-drift 10s ease-in-out infinite; }
+
+.reveal-panel { position: relative; overflow: hidden; }
+.reveal-panel::after { content:""; position:absolute; inset:0; background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%); transform:translateX(-120%); transition:transform .9s cubic-bezier(.22,1,.36,1); pointer-events:none; }
+.reveal-panel:hover::after { transform:translateX(120%); }
+
+.hover-lift { transition: transform .5s cubic-bezier(.22,1,.36,1), box-shadow .5s ease; }
+.hover-lift:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,.10); }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } }
