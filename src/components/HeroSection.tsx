@@ -1,123 +1,116 @@
 import { motion } from "framer-motion";
+import { ArrowDown, Download, Github, Linkedin } from "lucide-react";
 
 const HeroSection = () => {
+  const scrollTo = (id: string) => {
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <section className="min-h-screen flex items-center relative overflow-hidden py-16 md:py-0">
-      {/* Background grid pattern */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)',
-          backgroundSize: '40px 40px'
-        }} />
+    <section className="min-h-[92vh] flex items-center relative overflow-hidden py-16 md:py-20">
+      <div className="absolute inset-0 pointer-events-none opacity-40">
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
       <div className="container relative z-10 w-full">
-        <div className="grid md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr] gap-8 xl:gap-12 items-center">
-
-          {/* Text content */}
-          <div className="flex flex-col">
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-20 items-center">
+          <div>
             <motion.div
-              className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
             >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs text-primary font-medium">Available for new opportunities</span>
+              <span className="text-xs text-primary font-semibold">Open to new opportunities</span>
             </motion.div>
 
-            <motion.h1
-              className="font-display font-extrabold leading-[1] tracking-tight text-[clamp(2rem,5vw,4.5rem)]"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              <span className="text-foreground">Crafting</span>
-              <br />
-              <span className="text-foreground">data into</span>
-              <br />
-              <span className="gradient-text italic">insights</span>
-              <span className="text-foreground"> &</span>
-              <br />
-              <span className="text-foreground">web into</span>
-              <br />
-              <span className="gradient-text italic">experiences.</span>
-            </motion.h1>
-
             <motion.p
-              className="mt-5 text-sm md:text-base text-muted-foreground max-w-md leading-relaxed"
+              className="text-sm font-mono text-primary mb-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.1 }}
             >
-              Hi, I'm Gowtham Pandiyan, a Data Analyst crafting data-driven
-              web experiences. I combine analysis tools and dev skills to build digital
-              products that look beautiful and tell the real story.
+              Hello, I'm
+            </motion.p>
+
+            <motion.h1
+              className="font-display font-black leading-[0.95] tracking-tight text-[clamp(3rem,7vw,6.5rem)]"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+            >
+              Gowtham
+              <br />
+              <span className="gradient-text">Pandiyan.</span>
+            </motion.h1>
+
+            <motion.h2
+              className="mt-6 text-xl md:text-2xl font-semibold text-foreground max-w-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+            >
+              IT Support Engineer · Technical Professional
+            </motion.h2>
+
+            <motion.p
+              className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              4+ years of hands-on experience supporting desktops, laptops, servers and
+              basic networking. I troubleshoot practical technology problems, support users,
+              and build modern digital projects in my spare time.
             </motion.p>
 
             <motion.div
-              className="flex flex-wrap gap-3 mt-7"
+              className="flex flex-wrap gap-3 mt-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
+              transition={{ delay: 0.55 }}
             >
-              <a
-                href="#work"
-                onClick={(e) => { e.preventDefault(); document.querySelector("#work")?.scrollIntoView({ behavior: "smooth" }); }}
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-transform"
-              >
-                View Work
-              </a>
-              <a
-                href="#contact"
-                onClick={(e) => { e.preventDefault(); document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }); }}
-                className="px-6 py-2.5 border border-border text-foreground rounded-lg text-sm font-semibold hover:border-primary hover:text-primary transition-colors"
-              >
-                Contact Me
+              <button onClick={() => scrollTo("#work")} className="px-6 py-3 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-transform">
+                View My Work
+              </button>
+              <a href="/portfolio/gowtham-pandiyan.pdf" target="_blank" className="px-6 py-3 border border-border text-foreground rounded-lg text-sm font-semibold hover:border-primary hover:text-primary transition-colors inline-flex items-center gap-2">
+                <Download className="w-4 h-4" /> Resume
               </a>
             </motion.div>
+
+            <div className="flex items-center gap-4 mt-7">
+              <a href="https://github.com/gowthampandiyank" target="_blank" rel="noreferrer" aria-label="GitHub" className="text-muted-foreground hover:text-primary transition-colors"><Github className="w-5 h-5" /></a>
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin className="w-5 h-5" /></a>
+            </div>
           </div>
 
-          {/* Avatar / Illustration */}
           <motion.div
-            className="hidden md:flex justify-center items-center w-full"
-            initial={{ opacity: 0, scale: 0.85 }}
+            className="flex justify-center"
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+            transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
           >
-            <div className="relative w-full max-w-sm xl:max-w-md">
-              {/* Blurred glow behind the card */}
-              <div
-                className="absolute -inset-3 rounded-3xl blur-2xl opacity-60 pointer-events-none"
-                style={{ background: "conic-gradient(from 0deg, #ff0080, #ff8c00, #ffe000, #40e0d0, #0080ff, #8000ff, #ff0080)", animation: "rgb-spin 4s linear infinite" }}
-              />
-
-              {/* Border wrapper: clips the spinning gradient to a 4px border */}
-              <div className="relative rounded-3xl overflow-hidden p-[4px] w-full aspect-square">
-                {/* The spinning gradient — rotates inside the clipping wrapper */}
-                <div
-                  className="absolute rounded-full pointer-events-none"
-                  style={{
-                    inset: "-100%",
-                    background: "conic-gradient(from 0deg, #ff0080, #ff8c00, #ffe000, #40e0d0, #0080ff, #8000ff, #ff0080)",
-                    animation: "rgb-spin 4s linear infinite",
-                  }}
-                />
-                {/* Inner image card */}
-                <div className="relative w-full h-full rounded-[calc(1.5rem-4px)] overflow-hidden">
-  <img
-    src="/portfolio/avatar.webp"
-    alt="Gowtham Pandiyan"
-    className="w-full h-full object-cover object-top"
-  />
-</div>
+            <div className="relative w-full max-w-md">
+              <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/20 to-accent/20 blur-2xl" />
+              <div className="relative rounded-[2rem] overflow-hidden border border-border bg-card shadow-2xl">
+                <img src="/portfolio/gp1.jpg" alt="Gowtham Pandiyan" className="w-full aspect-[4/5] object-cover object-top" />
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 to-transparent pt-24">
+                  <p className="text-white text-sm font-semibold">Support · Systems · Technology</p>
+                  <p className="text-white/70 text-xs mt-1">Professional portfolio</p>
+                </div>
               </div>
-
-              <div className="absolute -top-5 -right-5 w-10 h-10 rounded-full bg-primary/20" />
-              <div className="absolute -bottom-4 -left-4 w-8 h-8 rounded-full bg-accent/20" />
+              <div className="absolute -bottom-5 -left-5 px-4 py-3 rounded-xl bg-card border border-border shadow-xl">
+                <p className="text-2xl font-bold text-primary">4+</p>
+                <p className="text-xs text-muted-foreground">Years experience</p>
+              </div>
             </div>
           </motion.div>
         </div>
+
+        <button onClick={() => scrollTo("#about")} className="hidden md:flex items-center gap-2 absolute bottom-5 left-1/2 -translate-x-1/2 text-xs text-muted-foreground hover:text-primary transition-colors">
+          Scroll to explore <ArrowDown className="w-3.5 h-3.5" />
+        </button>
       </div>
     </section>
   );
